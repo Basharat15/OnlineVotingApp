@@ -30,20 +30,7 @@ const CandidateRegister = () => {
   let RBSheetRef = useRef();
   // console.log('user image', userImage);
 
-  const registerHandler = async () => {
-    // try {
-    //   await firestore().collection('users').doc('1').add({
-    //     name,
-    //     email,
-    //   });
-    // } catch (error) {
-    //   console.log('e', error);
-    // }
-    try {
-      await firestore().collection('check').set({});
-    } catch (error) {
-      console.log('e', error);
-    }
+  const registerHandler = () => {
     navigation.navigate('Candidate Dashboard');
   };
 
