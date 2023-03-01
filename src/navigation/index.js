@@ -8,6 +8,9 @@ import CandidateRegister from '../screens/candidate/register';
 import CandidateLogin from '../screens/candidate/login';
 import VoterRegister from '../screens/voter/register';
 import VoterLogin from '../screens/voter/login';
+import CandidateDashboard from '../screens/candidate/dashboard';
+import VoterDashboard from '../screens/voter/dashboard';
+import AdminDashboard from '../screens/admin/dashboard';
 
 const MainStack = createNativeStackNavigator();
 const WellComeStack = createNativeStackNavigator();
@@ -38,10 +41,15 @@ function WellComeScreens() {
 function AdminScreens() {
   return (
     <AdminStack.Navigator
-      initialRouteName="AdminLogin"
-      screenOptions={{headerShown: false}}>
-      <AdminStack.Screen name="AdminRegister" component={AdminRegister} />
-      <AdminStack.Screen name="AdminLogin" component={AdminLogin} />
+      initialRouteName="Admin Login"
+      screenOptions={{headerShown: true}}>
+      <AdminStack.Screen name="Admin Register" component={AdminRegister} />
+      <AdminStack.Screen name="Admin Login" component={AdminLogin} />
+      <AdminStack.Screen
+        name="Admin Dashboard"
+        component={AdminDashboard}
+        options={{title: 'Admin Dashboard'}}
+      />
     </AdminStack.Navigator>
   );
 }
@@ -61,6 +69,11 @@ function CandidateScreens() {
         component={CandidateLogin}
         options={{title: 'Candidate Login'}}
       />
+      <CandidateStack.Screen
+        name="Candidate Dashboard"
+        component={CandidateDashboard}
+        options={{title: 'Candidate Dashboard'}}
+      />
     </CandidateStack.Navigator>
   );
 }
@@ -68,10 +81,19 @@ function CandidateScreens() {
 function VoterScreens() {
   return (
     <VoterStack.Navigator
-      initialRouteName="VoterLogin"
-      screenOptions={{headerShown: false}}>
-      <VoterStack.Screen name="Voter Register" component={VoterRegister} />
-      <VoterStack.Screen name="VoterLogin" component={VoterLogin} />
+      initialRouteName="Voter Login"
+      screenOptions={{headerShown: true}}>
+      <VoterStack.Screen
+        name="Voter Register"
+        component={VoterRegister}
+        options={{title: 'Voter Registration'}}
+      />
+      <VoterStack.Screen name="Voter Login" component={VoterLogin} />
+      <VoterStack.Screen
+        name="Voter Dashboard"
+        component={VoterDashboard}
+        options={{title: 'Voter Dashboard'}}
+      />
     </VoterStack.Navigator>
   );
 }

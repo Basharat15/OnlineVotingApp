@@ -19,7 +19,12 @@ const CandidateLogin = () => {
           onChangeText={setPassword}
           secureTextEntry={true}
         />
-        <CustomButton title="Login" />
+        <CustomButton
+          title="Login"
+          onPress={() => {
+            navigation.navigate('Candidate Dashboard');
+          }}
+        />
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.bottomText}>Don't have account?</Text>
