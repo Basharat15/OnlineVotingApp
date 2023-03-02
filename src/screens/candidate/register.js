@@ -17,7 +17,6 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import Images from '../../constants/images';
 import ImagePicker from 'react-native-image-crop-picker';
 import {request, PERMISSIONS} from 'react-native-permissions';
-import firestore from '@react-native-firebase/firestore';
 
 const CandidateRegister = () => {
   const navigation = useNavigation();
