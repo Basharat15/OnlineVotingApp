@@ -1,10 +1,30 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import Theme from '../utils/theme';
 import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
 
 const WellCome = () => {
   const navigation = useNavigation();
+  useEffect(() => {
+    myfuction();
+  });
+  const myfuction = async () => {
+    try {
+      const getData = await firestore()
+        .collection('users')
+        .doc('1')
+        .get()
+        .then(res => {
+          console.log('This is data from firestore', res);
+        });
+      console.log('data', getData);
+    } catch {
+      err => {
+        console.log('er', err);
+      };
+    }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.headingText}>Continue as</Text>
