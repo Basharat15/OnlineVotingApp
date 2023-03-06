@@ -1,8 +1,13 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import AdminTopTab from '../../navigation/adminTopTab';
 
 const AdminDashboard = () => {
-  return <View style={styles.container}></View>;
+  return (
+    <View style={styles.container}>
+      <AdminTopTab />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -7,15 +7,19 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import CandidateCard from '../../components/candidateCard';
+import ResultCard from '../../components/resultCard';
 import firestore from '@react-native-firebase/firestore';
 import Theme from '../../utils/theme';
 import auth from '@react-native-firebase/auth';
-
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {setResult} from '../../redux/result/resultAction';
+import {RESULT_STATE} from '../../redux/result/getState';
 
-const CandidateDashboard = () => {
+const Result = () => {
   const [allCandidates, setAllCandidates] = useState([]);
+  const result = useSelector(RESULT_STATE.result);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   useEffect(() => {
     getDataFromFirebase();
@@ -28,7 +32,6 @@ const CandidateDashboard = () => {
       })
       .catch(error => Alert.alert('Error', error));
   };
-
   const getDataFromFirebase = async () => {
     await firestore()
       .collection('candidates')
@@ -39,18 +42,19 @@ const CandidateDashboard = () => {
   };
   const renderCandidateCard = ({item}) => {
     return (
-      <CandidateCard
+      <ResultCard
         candidateName={item._data.name}
         candidateEmail={item._data.email}
         candidatePhoneNumber={item._data.phoneNumber}
         candidateImageUrl={item._data.imgUrl}
+        candidateVotes={item._data.votes}
       />
     );
   };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headingText}>All Candidates</Text>
+        <Text style={styles.headingText}>Candidates Result</Text>
       </View>
       <FlatList
         data={allCandidates}
@@ -59,11 +63,14 @@ const CandidateDashboard = () => {
       />
       <View style={styles.footer}>
         <TouchableOpacity
+          disabled={result ? true : false}
           style={styles.footerContainer}
           onPress={() => {
-            navigation.navigate('Candidate Result');
+            dispatch(setResult(true));
           }}>
-          <Text style={styles.headingText}>Check Result</Text>
+          <Text style={styles.headingText}>
+            {result ? 'Result Posted' : 'Post Result'}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.footerContainer}
@@ -109,4 +116,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CandidateDashboard;
+export default Result;

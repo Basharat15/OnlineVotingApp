@@ -1,43 +1,26 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import CandidateCard from '../../components/candidateCard';
 import firestore from '@react-native-firebase/firestore';
+import Theme from '../../utils/theme';
+import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import {setResult} from '../../redux/result/resultAction';
+import {useDispatch} from 'react-redux';
 
 const VoterDashboard = () => {
-  const candidates = [
-    {
-      id: 1,
-      name: 'Basharat Abbas',
-      email: 'basharatabbas514@gmail.com',
-      phoneNumber: '03035880745',
-    },
-    {
-      id: 2,
-      name: 'Basharat Abbas',
-      email: 'basharatabbas514@gmail.com',
-      phoneNumber: '03035880745',
-    },
-    {
-      id: 3,
-      name: 'Basharat Abbas',
-      email: 'basharatabbas514@gmail.com',
-      phoneNumber: '03035880745',
-    },
-    {
-      id: 4,
-      name: 'Basharat Abbas',
-      email: 'basharatabbas514@gmail.com',
-      phoneNumber: '03035880745',
-    },
-    {
-      id: 5,
-      name: 'Basharat Abbas',
-      email: 'basharatabbas514@gmail.com',
-      phoneNumber: '03035880745',
-    },
-  ];
   const [allCandidates, setAllCandidates] = useState([]);
+  const dispatch = useDispatch();
   const [voted, setVoted] = useState(false);
+  const navigation = useNavigation();
+  const logoutHandler = async () => {
+    await auth()
+      .signOut()
+      .then(() => {
+        navigation.navigate('WellCome');
+      })
+      .catch(error => Alert.alert('Error', error));
+  };
   useEffect(() => {
     getDataFromFirebase();
   });
@@ -58,7 +41,7 @@ const VoterDashboard = () => {
           candidatePhoneNumber={item._data.phoneNumber}
           candidateImageUrl={item._data.imgUrl}
           cardButton={true}
-          title={'Cast Vote'}
+          title={voted ? 'Vote Casted' : 'Cast Vote'}
           buttonDisabled={voted ? true : false}
           onButtonPress={() => {
             firestore()
@@ -76,6 +59,7 @@ const VoterDashboard = () => {
                   });
               });
             setVoted(true);
+            dispatch(setResult(false));
           }}
         />
       </View>
@@ -91,6 +75,20 @@ const VoterDashboard = () => {
         renderItem={renderCandidateCard}
         keyExtractor={item => item.id}
       />
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.footerContainer}
+          onPress={() => {
+            navigation.navigate('Candidate Result');
+          }}>
+          <Text style={styles.headingText}>Check Result</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.footerContainer}
+          onPress={logoutHandler}>
+          <Text style={styles.headingText}>Log Out</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -99,13 +97,21 @@ const styles = StyleSheet.create({
   container: {
     // height: '100%',
     width: '100%',
-    marginBottom: '20%',
+    marginBottom: '35%',
   },
   header: {
     width: '95%',
     alignSelf: 'center',
     borderRadius: 10,
-    backgroundColor: 'red',
+    backgroundColor: Theme.primary,
+    paddingVertical: '2%',
+    marginVertical: '2%',
+  },
+  footerContainer: {
+    width: '48%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    backgroundColor: Theme.primary,
     paddingVertical: '2%',
     marginVertical: '2%',
   },
@@ -113,6 +119,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 22,
     fontWeight: 'bold',
+    color: Theme.white,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });
 

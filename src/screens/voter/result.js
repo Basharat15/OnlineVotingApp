@@ -7,27 +7,22 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import CandidateCard from '../../components/candidateCard';
+import ResultCard from '../../components/resultCard';
 import firestore from '@react-native-firebase/firestore';
 import Theme from '../../utils/theme';
 import auth from '@react-native-firebase/auth';
-
 import {useNavigation} from '@react-navigation/native';
+import {RESULT_STATE} from '../../redux/result/getState';
+import {useSelector} from 'react-redux';
 
-const CandidateDashboard = () => {
+const CandidateResult = () => {
   const [allCandidates, setAllCandidates] = useState([]);
+  const result = useSelector(RESULT_STATE.result);
+
   const navigation = useNavigation();
   useEffect(() => {
     getDataFromFirebase();
   });
-  const logoutHandler = async () => {
-    await auth()
-      .signOut()
-      .then(() => {
-        navigation.navigate('WellCome');
-      })
-      .catch(error => Alert.alert('Error', error));
-  };
 
   const getDataFromFirebase = async () => {
     await firestore()
@@ -39,38 +34,33 @@ const CandidateDashboard = () => {
   };
   const renderCandidateCard = ({item}) => {
     return (
-      <CandidateCard
+      <ResultCard
         candidateName={item._data.name}
         candidateEmail={item._data.email}
         candidatePhoneNumber={item._data.phoneNumber}
         candidateImageUrl={item._data.imgUrl}
+        candidateVotes={item._data.votes}
       />
     );
   };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headingText}>All Candidates</Text>
+        <Text style={styles.headingText}>Candidates Result</Text>
       </View>
-      <FlatList
-        data={allCandidates}
-        renderItem={renderCandidateCard}
-        keyExtractor={item => item.id}
-      />
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.footerContainer}
-          onPress={() => {
-            navigation.navigate('Candidate Result');
-          }}>
-          <Text style={styles.headingText}>Check Result</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.footerContainer}
-          onPress={logoutHandler}>
-          <Text style={styles.headingText}>Log Out</Text>
-        </TouchableOpacity>
-      </View>
+      {result ? (
+        <FlatList
+          data={allCandidates}
+          renderItem={renderCandidateCard}
+          keyExtractor={item => item.id}
+        />
+      ) : (
+        <View style={{marginTop: '40%'}}>
+          <Text style={{textAlign: 'center'}}>
+            The result is not posted by admin yet
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -79,18 +69,10 @@ const styles = StyleSheet.create({
   container: {
     // height: '100%',
     width: '100%',
-    marginBottom: '35%',
+    marginBottom: '20%',
   },
   header: {
     width: '95%',
-    alignSelf: 'center',
-    borderRadius: 10,
-    backgroundColor: Theme.primary,
-    paddingVertical: '2%',
-    marginVertical: '2%',
-  },
-  footerContainer: {
-    width: '48%',
     alignSelf: 'center',
     borderRadius: 10,
     backgroundColor: Theme.primary,
@@ -103,10 +85,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Theme.white,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
 });
 
-export default CandidateDashboard;
+export default CandidateResult;

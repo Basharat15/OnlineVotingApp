@@ -14,6 +14,7 @@ import CustomButton from '../../components/customButton';
 import Theme from '../../utils/theme';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const VoterRegister = () => {
   const navigation = useNavigation();
@@ -31,7 +32,7 @@ const VoterRegister = () => {
           console.log('user', user);
           firestore()
             .collection('voters')
-            .doc()
+            .doc(email)
             .set({
               name: name,
               phoneNumber: phoneNumber,

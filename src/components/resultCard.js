@@ -2,15 +2,12 @@ import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import Theme from '../utils/theme';
 
-const CandidateCard = ({
+const ResultCard = ({
   candidateName,
   candidateEmail,
   candidatePhoneNumber,
   candidateImageUrl,
-  cardButton,
-  title,
-  onButtonPress,
-  buttonDisabled,
+  candidateVotes,
 }) => {
   const styles = StyleSheet.create({
     container: {
@@ -25,7 +22,7 @@ const CandidateCard = ({
       borderRadius: 2,
     },
     imgContainer: {
-      height: cardButton ? '55%' : '75%',
+      height: '60%',
       width: '23%',
       marginHorizontal: '2%',
       marginTop: '2.5%',
@@ -46,7 +43,8 @@ const CandidateCard = ({
       fontWeight: 'bold',
     },
     containerStyle: {
-      backgroundColor: Theme.black,
+      backgroundColor: Theme.white,
+      justifyContent: 'flex-end',
       padding: '5%',
       borderRadius: 10,
       marginLeft: '40%',
@@ -55,6 +53,13 @@ const CandidateCard = ({
       textAlign: 'center',
       fontWeight: 'bold',
       color: Theme.white,
+    },
+    resultText: {
+      textAlign: 'center',
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: Theme.primary,
+      marginLeft: '35%',
     },
   });
   return (
@@ -66,17 +71,12 @@ const CandidateCard = ({
         <Text style={styles.nameText}>{candidateName}</Text>
         <Text style={styles.emailText}>{candidateEmail}</Text>
         <Text style={styles.emailText}>{candidatePhoneNumber}</Text>
-        {cardButton ? (
-          <TouchableOpacity
-            onPress={onButtonPress}
-            disabled={buttonDisabled}
-            style={styles.containerStyle}>
-            <Text style={styles.titleText}>{title}</Text>
-          </TouchableOpacity>
-        ) : null}
+        <Text style={styles.resultText}>
+          {'Total Votes: ' + candidateVotes}
+        </Text>
       </View>
     </View>
   );
 };
 
-export default CandidateCard;
+export default ResultCard;

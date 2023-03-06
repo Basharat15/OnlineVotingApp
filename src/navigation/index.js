@@ -11,6 +11,8 @@ import VoterLogin from '../screens/voter/login';
 import CandidateDashboard from '../screens/candidate/dashboard';
 import VoterDashboard from '../screens/voter/dashboard';
 import AdminDashboard from '../screens/admin/dashboard';
+import CandidateResult from '../screens/candidate/result';
+import Result from '../screens/voter/result';
 
 const MainStack = createNativeStackNavigator();
 const WellComeStack = createNativeStackNavigator();
@@ -74,6 +76,11 @@ function CandidateScreens() {
         component={CandidateDashboard}
         options={{title: 'Candidate Dashboard'}}
       />
+      <CandidateStack.Screen
+        name="Candidate Result"
+        component={CandidateResult}
+        options={{title: 'Candidate Result'}}
+      />
     </CandidateStack.Navigator>
   );
 }
@@ -93,6 +100,11 @@ function VoterScreens() {
         name="Voter Dashboard"
         component={VoterDashboard}
         options={{title: 'Voter Dashboard'}}
+      />
+      <VoterStack.Screen
+        name="Candidate Result"
+        component={CandidateResult}
+        options={{title: 'Candidate Result'}}
       />
     </VoterStack.Navigator>
   );

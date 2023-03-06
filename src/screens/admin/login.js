@@ -1,14 +1,29 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
+import {TouchableOpacity, View, Text, StyleSheet, Alert} from 'react-native';
 import Theme from '../../utils/theme';
 import Input from '../../components/input';
 import CustomButton from '../../components/customButton';
 import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
 
 const AdminLogin = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('admin@app.com');
+  const [email, setEmail] = useState('admin@admin.com');
   const [password, setPassword] = useState('');
+  const loginHandler = async () => {
+    await auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(user => {
+        console.log('user', user);
+        if (user) {
+          navigation.navigate('Admin Dashboard');
+        }
+      })
+      .catch(err => {
+        console.log('Err', err);
+        Alert.alert('Error', err.message);
+      });
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.headingText}>Admin Login</Text>
@@ -19,12 +34,7 @@ const AdminLogin = () => {
           onChangeText={setPassword}
           secureTextEntry={true}
         />
-        <CustomButton
-          title="Login"
-          onPress={() => {
-            navigation.navigate('Admin Dashboard');
-          }}
-        />
+        <CustomButton title="Login" onPress={loginHandler} />
       </View>
       {/* <View style={styles.bottomContainer}>
         <Text style={styles.bottomText}>Don't have account?</Text>
