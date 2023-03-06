@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import CandidateCard from '../../components/candidateCard';
-import CardButton from '../../components/cardButton';
+import firestore from '@react-native-firebase/firestore';
 
 const VoterDashboard = () => {
   const candidates = [
@@ -36,20 +36,46 @@ const VoterDashboard = () => {
       phoneNumber: '03035880745',
     },
   ];
+  const [allCandidates, setAllCandidates] = useState([]);
+  const [voted, setVoted] = useState(false);
+  useEffect(() => {
+    getDataFromFirebase();
+  });
+  const getDataFromFirebase = async () => {
+    await firestore()
+      .collection('candidates')
+      .get()
+      .then(res => {
+        setAllCandidates(res.docs);
+      });
+  };
   const renderCandidateCard = ({item}) => {
     return (
       <View>
         <CandidateCard
-          candidateName={item.name}
-          candidateEmail={item.email}
-          candidatePhoneNumber={item.phoneNumber}
-        />
-        <CardButton
-          title="Cast Vote"
-          customStyle={{
-            marginHorizontal: '2.5%',
-            marginTop: '1%',
-            borderRadius: 5,
+          candidateName={item._data.name}
+          candidateEmail={item._data.email}
+          candidatePhoneNumber={item._data.phoneNumber}
+          candidateImageUrl={item._data.imgUrl}
+          cardButton={true}
+          title={'Cast Vote'}
+          buttonDisabled={voted ? true : false}
+          onButtonPress={() => {
+            firestore()
+              .collection('candidates')
+              .doc(item._data.email)
+              .get()
+              .then(res => {
+                let vote = res.data().votes;
+                let increment = vote + 1;
+                firestore()
+                  .collection('candidates')
+                  .doc(item._data.email)
+                  .update({
+                    votes: increment,
+                  });
+              });
+            setVoted(true);
           }}
         />
       </View>
@@ -61,7 +87,7 @@ const VoterDashboard = () => {
         <Text style={styles.headingText}>All Candidates</Text>
       </View>
       <FlatList
-        data={candidates}
+        data={allCandidates}
         renderItem={renderCandidateCard}
         keyExtractor={item => item.id}
       />
@@ -73,6 +99,7 @@ const styles = StyleSheet.create({
   container: {
     // height: '100%',
     width: '100%',
+    marginBottom: '20%',
   },
   header: {
     width: '95%',

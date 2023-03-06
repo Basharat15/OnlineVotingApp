@@ -38,13 +38,16 @@ const CandidateDashboard = () => {
   ];
   const [allCandidates, setAllCandidates] = useState([]);
   useEffect(() => {
-    const data = firestore()
+    getDataFromFirebase();
+  });
+  const getDataFromFirebase = async () => {
+    await firestore()
       .collection('candidates')
       .get()
       .then(res => {
         setAllCandidates(res.docs);
       });
-  });
+  };
   const renderCandidateCard = ({item}) => {
     return (
       <CandidateCard

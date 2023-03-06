@@ -1,12 +1,16 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import Images from '../constants/images';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import Theme from '../utils/theme';
 
 const CandidateCard = ({
   candidateName,
   candidateEmail,
   candidatePhoneNumber,
   candidateImageUrl,
+  cardButton,
+  title,
+  onButtonPress,
+  buttonDisabled,
 }) => {
   return (
     <View style={styles.container}>
@@ -17,6 +21,14 @@ const CandidateCard = ({
         <Text style={styles.nameText}>{candidateName}</Text>
         <Text style={styles.emailText}>{candidateEmail}</Text>
         <Text style={styles.emailText}>{candidatePhoneNumber}</Text>
+        {cardButton ? (
+          <TouchableOpacity
+            onPress={onButtonPress}
+            disabled={buttonDisabled}
+            style={styles.containerStyle}>
+            <Text style={styles.titleText}>{title}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
@@ -34,7 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   imgContainer: {
-    height: '80%',
+    height: '55%',
     width: '23%',
     marginHorizontal: '2%',
     marginTop: '2.5%',
@@ -53,6 +65,17 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  containerStyle: {
+    backgroundColor: Theme.black,
+    padding: '5%',
+    borderRadius: 10,
+    marginLeft: '40%',
+  },
+  titleText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: Theme.white,
   },
 });
 export default CandidateCard;
