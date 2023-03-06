@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import CandidateCard from '../../components/candidateCard';
+import firestore from '@react-native-firebase/firestore';
 
 const CandidateDashboard = () => {
   const candidates = [
@@ -35,12 +36,22 @@ const CandidateDashboard = () => {
       phoneNumber: '03035880745',
     },
   ];
+  const [allCandidates, setAllCandidates] = useState([]);
+  useEffect(() => {
+    const data = firestore()
+      .collection('candidates')
+      .get()
+      .then(res => {
+        setAllCandidates(res.docs);
+      });
+  });
   const renderCandidateCard = ({item}) => {
     return (
       <CandidateCard
-        candidateName={item.name}
-        candidateEmail={item.email}
-        candidatePhoneNumber={item.phoneNumber}
+        candidateName={item._data.name}
+        candidateEmail={item._data.email}
+        candidatePhoneNumber={item._data.phoneNumber}
+        candidateImageUrl={item._data.imgUrl}
       />
     );
   };
@@ -50,7 +61,7 @@ const CandidateDashboard = () => {
         <Text style={styles.headingText}>All Candidates</Text>
       </View>
       <FlatList
-        data={candidates}
+        data={allCandidates}
         renderItem={renderCandidateCard}
         keyExtractor={item => item.id}
       />

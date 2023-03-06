@@ -1,14 +1,29 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
+import {TouchableOpacity, View, Text, StyleSheet, Alert} from 'react-native';
 import Theme from '../../utils/theme';
 import Input from '../../components/input';
 import CustomButton from '../../components/customButton';
 import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
 
 const VoterLogin = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const loginHandler = async () => {
+    await auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(user => {
+        console.log('user', user);
+        if (user) {
+          navigation.navigate('Voter Dashboard');
+        }
+      })
+      .catch(err => {
+        console.log('Err', err);
+        Alert.alert('Error', err.message);
+      });
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.headingText}>Voter Login</Text>
@@ -19,12 +34,7 @@ const VoterLogin = () => {
           onChangeText={setPassword}
           secureTextEntry={true}
         />
-        <CustomButton
-          title="Login"
-          onPress={() => {
-            navigation.navigate('Voter Dashboard');
-          }}
-        />
+        <CustomButton title="Login" onPress={loginHandler} />
       </View>
       <View style={styles.bottomContainer}>
         <Text style={styles.bottomText}>Don't have account?</Text>

@@ -7,13 +7,13 @@ import {useNavigation} from '@react-navigation/native';
 
 const AdminLogin = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('admin@app.com');
   const [password, setPassword] = useState('');
   return (
     <View style={styles.container}>
       <Text style={styles.headingText}>Admin Login</Text>
       <View style={styles.centerContainer}>
-        <Input placeHolder="Email" onChangeText={setEmail} />
+        <Input placeHolder={email} onChangeText={setEmail} editable={false} />
         <Input
           placeHolder="Password"
           onChangeText={setPassword}

@@ -6,11 +6,12 @@ const CandidateCard = ({
   candidateName,
   candidateEmail,
   candidatePhoneNumber,
+  candidateImageUrl,
 }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imgContainer}>
-        <Image source={Images.userIcon} style={styles.img} />
+        <Image source={{uri: candidateImageUrl}} style={styles.img} />
       </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.nameText}>{candidateName}</Text>

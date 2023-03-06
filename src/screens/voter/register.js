@@ -13,10 +13,7 @@ import Input from '../../components/input';
 import CustomButton from '../../components/customButton';
 import Theme from '../../utils/theme';
 import {useNavigation} from '@react-navigation/native';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import Images from '../../constants/images';
-import ImagePicker from 'react-native-image-crop-picker';
-import {request, PERMISSIONS} from 'react-native-permissions';
+import auth from '@react-native-firebase/auth';
 
 const VoterRegister = () => {
   const navigation = useNavigation();
@@ -26,55 +23,38 @@ const VoterRegister = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // let RBSheetRef = useRef();
-  // // console.log('user image', userImage);
-  // const selectImage = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //   }).then(image => {
-  //     setUserImage({path: image?.path});
-  //     RBSheetRef?.current.close();
-  //   });
-  // };
-  // const openCamera = () => {
-  //   ImagePicker.openCamera({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //   }).then(image => {
-  //     setUserImage({path: image?.path});
+  const registerHandler = async () => {
+    await auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(user => {
+        if (user) {
+          console.log('user', user);
+          firestore()
+            .collection('voters')
+            .doc()
+            .set({
+              name: name,
+              phoneNumber: phoneNumber,
+              email: email,
+            })
+            .then(res => {
+              navigation.navigate('Voter Dashboard');
+            })
+            .catch(err => {
+              console.log('Error', err);
+            });
+        }
+      })
+      .catch(err => {
+        console.log('Error Message', err.message);
+        Alert.alert('Error', err.message);
+      });
+  };
 
-  //     RBSheetRef?.current.close();
-  //   });
-  // };
-  // async function requestCameraPermission() {
-  //   try {
-  //     const permission = await request(PERMISSIONS.ANDROID.CAMERA);
-  //     if (permission == 'granted') {
-  //       openCamera();
-  //     } else {
-  //       Alert.alert("You don't have permissions to open camera!");
-  //     }
-  //   } catch (err) {
-  //     console.warn(err);
-  //   }
-  // }
   return (
     <KeyboardAvoidingView style={styles.container}>
       {/* <Text style={styles.headingText}>Candidate Registration</Text> */}
       <ScrollView style={styles.centralContainer}>
-        {/* <TouchableOpacity
-          style={styles.imageCircle}
-          onPress={() => {
-            RBSheetRef?.current?.open();
-          }}>
-          <Image
-            source={userImage === '' ? Images.userIcon : {uri: userImage.path}}
-            style={{height: '100%', width: '100%'}}
-          />
-        </TouchableOpacity> */}
         <Input placeHolder="Full Name" onChangeText={setName} />
         <Input placeHolder="Email" onChangeText={setEmail} />
         <Input placeHolder="Phone Number" onChangeText={setPhoneNumber} />
@@ -86,9 +66,7 @@ const VoterRegister = () => {
         <CustomButton
           title="Register"
           customStyle={{marginBottom: '5%'}}
-          onPress={() => {
-            navigation.navigate('Voter Dashboard');
-          }}
+          onPress={registerHandler}
         />
       </ScrollView>
       <View style={styles.bottomContainer}>

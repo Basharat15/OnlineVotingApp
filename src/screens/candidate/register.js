@@ -17,6 +17,9 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import Images from '../../constants/images';
 import ImagePicker from 'react-native-image-crop-picker';
 import {request, PERMISSIONS} from 'react-native-permissions';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 
 const CandidateRegister = () => {
   const navigation = useNavigation();
@@ -25,12 +28,60 @@ const CandidateRegister = () => {
   const [userImage, setUserImage] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const [imageUrlOnServer, setImageUrlOnServer] = useState('');
   let RBSheetRef = useRef();
   // console.log('user image', userImage);
 
-  const registerHandler = () => {
-    navigation.navigate('Candidate Dashboard');
+  const registerHandler = async () => {
+    await auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(user => {
+        if (user) {
+          console.log('user', user);
+          const uid = user.user.uid;
+          storage()
+            .ref(email + '/')
+            .putFile(userImage.path)
+            .then(res => {
+              console.log('uploaded');
+              storage()
+                .ref(email + '/')
+                .getDownloadURL()
+                .then(downloadRes => {
+                  setImageUrlOnServer(downloadRes);
+                })
+                .catch(err => {
+                  console.log('Error', err);
+                });
+            })
+            .catch(err => {
+              console.log('er', error);
+            });
+          firestore()
+            .collection('candidates')
+            .doc(email)
+            .set({
+              name: name,
+              phoneNumber: phoneNumber,
+              email: email,
+              imgUrl: imageUrlOnServer,
+              uid: uid,
+              votes: 0,
+            })
+            .then(res => {
+              navigation.navigate('Candidate Dashboard');
+            })
+            .catch(err => {
+              console.log('Error', err);
+            });
+        }
+      })
+      .catch(err => {
+        console.log('Error Message', err.message);
+        Alert.alert('Error', err.message);
+      });
+
+    // navigation.navigate('Candidate Dashboard');
   };
 
   const selectImage = () => {
